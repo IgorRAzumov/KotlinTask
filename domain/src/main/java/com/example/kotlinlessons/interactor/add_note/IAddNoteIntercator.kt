@@ -1,0 +1,3 @@
+package com.example.kotlinlessons.interactor.add_note
+
+interface IAddNoteIntercator
