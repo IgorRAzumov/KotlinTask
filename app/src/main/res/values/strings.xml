@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">KotlinLessons</string>
+	<string name="app_name">KotlinLessons</string>
+	<string name="note_add_note">Новая заметка</string>
+	<string name="note_new_note">Новая заметка</string>
+	<string name="common_title">Заголовок</string>
+	<string name="note_body_hint">Текст заметки</string>
 </resources>

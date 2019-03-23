@@ -1,14 +1,14 @@
-package com.example.kotlinlessons.repository
+package com.example.kotlinlessons.remote
 
 import com.example.kotlinlessons.model.Note
 import com.example.kotlinlessons.model.NoteResult
 import io.reactivex.Observable
 import io.reactivex.Single
 
-interface INotesRepository {
-    fun getNotes(): Observable<NoteResult>
+interface IRemoteNotesSource {
+    fun getNoteById(id: String): Single<NoteResult>
 
     fun saveNote(note: Note): Single<NoteResult>
 
-    fun getNoteById(id: String): Single<NoteResult>
+    fun getNotes(): Observable<NoteResult>
 }

@@ -1,14 +1,16 @@
 package com.example.kotlinlessons.model
 
+import java.io.Serializable
 import java.util.*
 
+
 data class Note(
-    val id: String,
-    val title: String,
-    val text: String,
-    val color: Note.Color,
+    val id: String = "",
+    val title: String = "",
+    val text: String = "",
+    val color: Note.Color = Color.WHITE,
     val lastChanged: Date = Date()
-) {
+) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Note) return false
