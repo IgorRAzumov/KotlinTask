@@ -2,8 +2,8 @@ package com.example.kotlinlessons.ui.note
 
 import com.example.kotlinlessons.interactor.add_note.IAddNoteInteractor
 import com.example.kotlinlessons.interactor.note.INoteInteractor
+import com.example.kotlinlessons.model.ExequteResult
 import com.example.kotlinlessons.model.Note
-import com.example.kotlinlessons.model.NoteResult
 import com.example.kotlinlessons.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
@@ -34,10 +34,10 @@ class NoteViewModel(private val addNoteInteractor: IAddNoteInteractor, private v
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { notesResult ->
                 when (notesResult) {
-                    is NoteResult.Success<*> -> {
+                    is ExequteResult.Success<*> -> {
                         viewStateLiveData.value = NoteViewState(notesResult.data as? Note)
                     }
-                    is NoteResult.Error -> {
+                    is ExequteResult.Error -> {
                         viewStateLiveData.value = NoteViewState(throwable = notesResult.error)
                     }
                 }
