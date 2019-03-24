@@ -7,7 +7,7 @@ import android.widget.Toast
 import com.github.ajalt.timberkt.Timber
 
 abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
-    abstract val viewModel: BaseViewModel<T, S>
+    abstract val model: BaseViewModel<T, S>
     abstract val layoutRes: Int
 
     abstract fun renderData(data: T)
@@ -15,7 +15,7 @@ abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layoutRes)
-        viewModel.getViewState().observe(this, Observer<S> { viewState ->
+        model.getViewState().observe(this, Observer<S> { viewState ->
             if (viewState == null) return@Observer
             if (viewState.data != null) renderData(viewState.data)
             if (viewState.error != null) renderError(viewState.error)

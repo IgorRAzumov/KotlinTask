@@ -2,17 +2,14 @@ package com.example.kotlinlessons.ui.main
 
 import com.example.kotlinlessons.ext.addTo
 import com.example.kotlinlessons.interactor.notes.INotesInteractor
-import com.example.kotlinlessons.interactor.notes.NotesInteractor
 import com.example.kotlinlessons.model.Note
 import com.example.kotlinlessons.model.NoteResult
-import com.example.kotlinlessons.remote.FirestoreNotesSource
-import com.example.kotlinlessons.repository.NotesRepositiry
 import com.example.kotlinlessons.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
-class MainViewModel(private val notesInteractor: INotesInteractor = NotesInteractor(NotesRepositiry(FirestoreNotesSource()))) :
+class MainViewModel(private val notesInteractor: INotesInteractor) :
     BaseViewModel<List<Note>?, MainViewState>() {
 
     init {

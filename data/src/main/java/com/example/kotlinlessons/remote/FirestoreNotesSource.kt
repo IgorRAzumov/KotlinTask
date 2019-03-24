@@ -8,13 +8,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import io.reactivex.Observable
 import io.reactivex.Single
 
-class FirestoreNotesSource : IRemoteNotesSource {
+class FirestoreNotesSource(private val store:FirebaseFirestore) : IRemoteNotesSource {
     companion object {
         private const val NOTES_COLLECTIONS = "NOTES_COLLECTIONS"
-    }
-
-    private val store by lazy {
-        FirebaseFirestore.getInstance()
     }
 
     private val notesReference by lazy {

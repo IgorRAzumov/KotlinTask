@@ -1,6 +1,5 @@
 package com.example.kotlinlessons.ui.main
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import com.example.kotlinlessons.R
@@ -8,15 +7,14 @@ import com.example.kotlinlessons.model.Note
 import com.example.kotlinlessons.ui.base.BaseActivity
 import com.example.kotlinlessons.ui.note.NoteActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
     override val layoutRes: Int = R.layout.activity_main
 
     lateinit var adapter: NotesRVAdapter
 
-    override val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(this).get(MainViewModel::class.java)
-    }
+    override val model: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

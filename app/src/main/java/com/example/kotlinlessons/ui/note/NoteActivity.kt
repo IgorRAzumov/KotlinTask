@@ -1,6 +1,5 @@
 package com.example.kotlinlessons.ui.note
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +12,7 @@ import com.example.kotlinlessons.ui.base.BaseActivity
 import com.example.kotlinlessons.ui.base.view.TextChangeListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_note.*
+import org.koin.android.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,9 +31,7 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
 
     override val layoutRes = R.layout.activity_note
 
-    override val viewModel: NoteViewModel by lazy {
-        ViewModelProviders.of(this).get(NoteViewModel::class.java)
-    }
+    override val model: NoteViewModel by viewModel()
 
     private val textChangeListener = object : TextChangeListener {
         private var timer = Timer()
@@ -59,7 +57,7 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         val noteId = intent.getStringExtra(EXTRA_NOTE)
 
         noteId?.let {
-            viewModel.loadNote(it)
+            model.loadNote(it)
         } ?: let {
             supportActionBar?.title = getString(R.string.note_new_note)
         }
@@ -123,7 +121,7 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
             et_body.text.toString()
         )
 
-        note?.let { viewModel.save(note!!) }
+        note?.let { model.save(note!!) }
     }
 }
 
