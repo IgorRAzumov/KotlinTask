@@ -7,42 +7,41 @@ import com.example.kotlinlessons.model.Note
 import com.example.kotlinlessons.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
-class NoteViewModel(private val addNoteInteractor: IAddNoteInteractor, private val noteInteractor: INoteInteractor)
-    : BaseViewModel<Note?, NoteViewState>() {
+class NoteViewModel(private val addNoteInteractor: IAddNoteInteractor, private val noteInteractor: INoteInteractor) :
+    BaseViewModel<NoteViewState.Data, NoteViewState>() {
 
-    private var pendingNote: Note? = null
+    private val currenNote: Note?
+        get() = viewStateLiveData.value?.data?.note
 
     fun save(note: Note) {
-        pendingNote = note
-    }
-
-    override fun onCleared() {
-        pendingNote?.let {
-            addNoteInteractor.addNote(it)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe()
-                .addTo(disposables)
-        }
+        viewStateLiveData.value = NoteViewState(NoteViewState.Data(note = note))
     }
 
     fun loadNote(noteId: String) {
         noteInteractor.getNoteById(noteId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { notesResult ->
-                when (notesResult) {
-                    is ExequteResult.Success<*> -> {
-                        viewStateLiveData.value = NoteViewState(notesResult.data as? Note)
-                    }
-                    is ExequteResult.Error -> {
-                        viewStateLiveData.value = NoteViewState(throwable = notesResult.error)
-                    }
+            .subscribeBy(onSuccess = { notesResult ->
+                viewStateLiveData.value = when (notesResult) {
+                    is ExequteResult.Success<*> -> NoteViewState(NoteViewState.Data(note = notesResult.data as Note?))
+                    is ExequteResult.Error -> NoteViewState(error = notesResult.error)
                 }
-            }
+            }, onError = {
+                viewStateLiveData.value = NoteViewState(error = it)
+            })
             .addTo(disposables)
+    }
 
+    override fun onCleared() {
+        currenNote?.let {
+            addNoteInteractor.addNote(it)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
+                .addTo(disposables)
+        }
     }
 }

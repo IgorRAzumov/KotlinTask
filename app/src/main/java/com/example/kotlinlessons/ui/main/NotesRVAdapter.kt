@@ -9,8 +9,8 @@ import android.widget.TextView
 import com.example.kotlinlessons.R
 import com.example.kotlinlessons.model.Note
 
-class NotesRVAdapter(val onItemClick: ((Note) -> Unit)? = null) :
-    RecyclerView.Adapter<NotesRVAdapter.NotesViewHolder>() {
+class NotesRVAdapter(val onItemClick: ((Note) -> Unit)? = null) : RecyclerView.Adapter<NotesRVAdapter.NotesViewHolder>() {
+
     var notes: List<Note> = listOf()
         set(value) {
             field = value

@@ -18,8 +18,7 @@ class MainViewModel(private val notesInteractor: INotesInteractor) :
     }
 
     private fun loadNotes() {
-        notesInteractor
-            .getNotes()
+        notesInteractor.getNotes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(

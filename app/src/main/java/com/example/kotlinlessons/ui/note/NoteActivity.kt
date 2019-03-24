@@ -1,22 +1,20 @@
 package com.example.kotlinlessons.ui.note
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.view.MenuItem
 import com.example.kotlinlessons.R
+import com.example.kotlinlessons.ext.format
 import com.example.kotlinlessons.model.Note
 import com.example.kotlinlessons.ui.base.BaseActivity
 import com.example.kotlinlessons.ui.base.view.TextChangeListener
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_note.*
-import org.koin.android.viewmodel.ext.android.viewModel
-import java.text.SimpleDateFormat
 import java.util.*
 
-class NoteActivity : BaseActivity<Note?, NoteViewState>() {
+class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
     companion object {
         private val EXTRA_NOTE = NoteActivity::class.java.name + "EXTRA_NOTE"
         private const val DATE_FORMAT = "dd.MM.yyyy"
@@ -30,8 +28,9 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
     }
 
     override val layoutRes = R.layout.activity_note
-
-    override val model: NoteViewModel by viewModel()
+    override val model: NoteViewModel by lazy {
+        ViewModelProviders.of(this).get(NoteViewModel::class.java)
+    }
 
     private val textChangeListener = object : TextChangeListener {
         private var timer = Timer()
@@ -47,6 +46,7 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         }
     }
 
+    private var color = Note.Color.WHITE
     private var note: Note? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,14 +66,13 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         et_body.addTextChangedListener(textChangeListener)
     }
 
-    override fun renderData(data: Note?) {
-        this.note = data
-        supportActionBar?.title = if (this.note != null) {
-            SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(note!!.lastChanged)
-        } else {
-            getString(R.string.note_new_note)
+    override fun renderData(data: NoteViewState.Data) {
+        if (data.isDeleted) {
+            finish()
         }
 
+        this.note = data.note
+        data.note?.let { color = it.color }
         initView()
     }
 
@@ -88,10 +87,12 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
     }
 
     private fun initView() {
-        note?.let {
-            et_title.setText(it.title)
-            et_body.setText(it.text)
-            tb_notes_toolbar.setBackgroundColor(ContextCompat.getColor(this, parseColor(it.color)))
+        note?.run {
+            supportActionBar?.title = lastChanged.format(DATE_FORMAT)
+            removeEditListeners()
+            et_title.setText(title)
+            et_body.setText(text)
+            setEditListeners()
         }
     }
 
@@ -114,7 +115,8 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         note = note?.copy(
             title = et_title.text.toString(),
             text = et_body.text.toString(),
-            lastChanged = Date()
+            lastChanged = Date(),
+            color = color
         ) ?: Note(
             UUID.randomUUID().toString(),
             et_title.text.toString(),
@@ -123,5 +125,16 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
 
         note?.let { model.save(note!!) }
     }
+
+    private fun setEditListeners() {
+        et_title.addTextChangedListener(textChangeListener)
+        et_body.addTextChangedListener(textChangeListener)
+    }
+
+    private fun removeEditListeners() {
+        et_title.removeTextChangedListener(textChangeListener)
+        et_body.removeTextChangedListener(textChangeListener)
+    }
+
 }
 
